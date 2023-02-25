@@ -1,0 +1,25 @@
+[package]
+name = "bot-client"
+version = "0.1.0"
+authors = ["Simon Pannek"]
+edition = "2021"
+description = ""
+repository = "https://github.com/simonpannek/tip-rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0"
+itertools = "0.10"
+poise = "0.5.2"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+[dependencies.serenity]
+version = "0.11.5"
+default-features = false
+features = ["cache", "client", "collector", "rustls_backend", "unstable_discord_api"]
+
+[dependencies.tokio]
+version = "1.25"
+features = ["macros", "rt-multi-thread"]
