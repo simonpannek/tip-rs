@@ -6,7 +6,7 @@
 <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
 
 {#if $user}
-    Welcome {$user.username}#{$user.discriminator}!
+	Welcome {$user.username}#{$user.discriminator}!
 {:else}
-    Who are you?
+	Who are you?
 {/if}
