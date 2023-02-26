@@ -40,8 +40,8 @@ export async function GET({ fetch, url }) {
 	return new Response(null, {
 		headers: {
 			'Set-Cookie': [
-				`access_token=${response.access_token}; Path=/; HttpOnly; SameSite=Strict; Expires=${access_token_expires_in}}`,
-				`refresh_token=${response.refresh_token}; Path=/; HttpOnly; SameSite=Strict; Expires=${refresh_token_expires_in}`
+				`access_token=${response.access_token}; Path=/; HttpOnly; SameSite=None; Secure; Expires=${access_token_expires_in}}`,
+				`refresh_token=${response.refresh_token}; Path=/; HttpOnly; SameSite=None; Secure; Expires=${refresh_token_expires_in}`
 			],
 			Location: '/'
 		},
