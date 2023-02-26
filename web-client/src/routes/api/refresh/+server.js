@@ -3,11 +3,11 @@ import { error } from '@sveltejs/kit';
 import { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET } from '$env/static/private';
 
 export async function GET({ fetch, url }) {
-	// Get callback code
-	const code = url.searchParams.get('code');
+	// Get refresh token
+	const refresh_token = url.searchParams.get('refresh_token');
 
-	if (!code) {
-		throw error(400, 'No callback code specified');
+	if (!refresh_token) {
+		throw error(400, 'No refresh token specified');
 	}
 
 	// Fetch Discord token from API
@@ -16,9 +16,9 @@ export async function GET({ fetch, url }) {
 		body: new URLSearchParams({
 			client_id: DISCORD_CLIENT_ID,
 			client_secret: DISCORD_CLIENT_SECRET,
-			grant_type: 'authorization_code',
+			grant_type: 'refresh_token',
 			redirect_uri: `${url.origin}/api/callback`,
-			code,
+			refresh_token,
 			scope: 'identify'
 		}),
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -28,7 +28,7 @@ export async function GET({ fetch, url }) {
 	const response = await request.json();
 
 	if (response.error) {
-		throw error(400, 'Failed to verify callback code');
+		throw error(400, 'Failed to refresh access token');
 	}
 
 	// Fetch dynamic expire time of access token
