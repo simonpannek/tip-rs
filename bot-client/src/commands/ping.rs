@@ -10,7 +10,7 @@ pub async fn ping(ctx: Context<'_>) -> Result<()> {
     let embed = create_embed("Pong!", "I am listening 🐧");
     ctx.send(|reply| {
         reply.embeds = vec![embed];
-        reply
+        reply.ephemeral(true)
     })
     .await?;
 
