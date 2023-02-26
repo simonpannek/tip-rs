@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 
-import { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, VERCEL_URL } from '$env/static/private';
+import { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET } from '$env/static/private';
 
 export async function GET({ url, fetch }) {
 	// Get callback code
@@ -17,7 +17,7 @@ export async function GET({ url, fetch }) {
 			client_id: DISCORD_CLIENT_ID,
 			client_secret: DISCORD_CLIENT_SECRET,
 			grant_type: 'authorization_code',
-			redirect_uri: `https://${"tip.panik.me"}/api/callback`,
+			redirect_uri: `${url.origin}/api/callback`,
 			code,
 			scope: 'identify email'
 		}),
@@ -26,8 +26,6 @@ export async function GET({ url, fetch }) {
 
 	// Parse response
 	const response = await request.json();
-
-    console.log(response);
 
 	if (response.error) {
 		throw error(400, 'Failed to verify callback code');
