@@ -1,6 +1,9 @@
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle({ event, resolve }) {
-	console.log(event);
+	// Always handle api requests the normal way
+	if (event.url.pathname.startsWith('/api/')) {
+		return resolve(event);
+	}
 
 	const refresh_token = event.cookies.get('refresh_token');
 	const access_token = event.cookies.get('access_token');

@@ -5,7 +5,7 @@
 
 	export let data;
 
-	$: console.log(data.user);
+	$: user && user.set(data.user);
 </script>
 
 <slot />
