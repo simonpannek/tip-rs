@@ -3,17 +3,25 @@ name = "bot-client"
 version = "0.1.0"
 authors = ["Simon Pannek"]
 edition = "2021"
-description = ""
+description = "Tip is a small discord bot for event planning/management, controlled by a web interface."
 repository = "https://github.com/simonpannek/tip-rs"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[workspace]
+members = [".", "entity", "migration"]
 
 [dependencies]
+entity = { path = "entity" }
+migration = { path = "migration" }
+
 anyhow = "1.0"
 itertools = "0.10"
 poise = "0.5.2"
 tracing = "0.1"
 tracing-subscriber = "0.3"
+
+[dependencies.sea-orm]
+version = "0.11"
+features = ["sqlx-postgres", "runtime-tokio-rustls", "macros"]
 
 [dependencies.serenity]
 version = "0.11.5"
