@@ -1,8 +1,8 @@
 use anyhow::{Error, Result};
 
-use crate::utils::create_embed;
+use crate::{client::Data, utils::create_embed};
 
-type Context<'a> = poise::Context<'a, (), Error>;
+type Context<'a> = poise::Context<'a, Data, Error>;
 
 /// Ping the bot.
 #[poise::command(slash_command)]
