@@ -8,9 +8,6 @@ export async function handle({ event, resolve }) {
 	const refresh_token = event.cookies.get('refresh_token');
 	const access_token = event.cookies.get('access_token');
 
-	console.log(refresh_token);
-	console.log(access_token);
-
 	// Access token has expired
 	if (refresh_token && !access_token) {
 		// Refresh access token
@@ -28,7 +25,10 @@ export async function handle({ event, resolve }) {
 
 		if (response.id) {
 			event.locals.user = {
-				...response
+				id: response.id,
+				username: response.username,
+				discriminator: response.discriminator,
+				avatar: response.avatar
 			};
 		}
 	}

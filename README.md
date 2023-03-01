@@ -1,4 +1,5 @@
 # tip-rs
+Tip is a small discord bot for event planning/management, controlled by a web interface.
 
 ## bot-client
 TODO
