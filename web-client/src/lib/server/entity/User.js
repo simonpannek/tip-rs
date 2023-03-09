@@ -6,7 +6,7 @@ export default function (sequelize, DataTypes) {
 		},
 		{
 			sequelize,
-			freezeTableName: true,
+			tableName: 'user',
 			timestamps: false
 		}
 	);

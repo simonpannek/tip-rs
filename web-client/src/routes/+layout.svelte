@@ -1,14 +1,15 @@
 <script>
 	import '../app.css';
 
-	import { user } from '$lib/auth.js';
+	import { user, guilds } from '$lib/auth.js';
 
 	import Header from '$lib/Header.svelte';
 	import Footer from '$lib/Footer.svelte';
 
 	export let data;
 
-	$: user && user.set(data.user);
+	$: $user = data.user;
+	$: $guilds = data.guilds;
 </script>
 
 <svelte:head>

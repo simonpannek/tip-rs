@@ -9,7 +9,7 @@ export default function (sequelize, DataTypes) {
 		},
 		{
 			sequelize,
-			freezeTableName: true,
+			tableName: 'event',
 			timestamps: false
 		}
 	);

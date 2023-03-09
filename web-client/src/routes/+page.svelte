@@ -1,12 +1,13 @@
 <script>
-	import { user } from '$lib/auth.js';
+	import { guilds } from '$lib/auth.js';
+
+	import Guild from '$lib/Guild.svelte';
+
+	export let data;
 </script>
 
-<h1 class="text-3xl text-accent1">Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
-
-{#if $user}
-	Welcome {$user.username}#{$user.discriminator}!
-{:else}
-	Who are you?
-{/if}
+<ul>
+	{#each data.db.guilds as { id }}
+		<Guild guild={$guilds.get(id)} />
+	{/each}
+</ul>

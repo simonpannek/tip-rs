@@ -1,5 +1,6 @@
-export const load = async function ({ data }) {
+export async function load({ data }) {
 	return {
-		user: data.user
+		user: data.user,
+		guilds: data.guilds
 	};
-};
+}

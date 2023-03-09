@@ -1,3 +1,4 @@
+import pg from 'pg';
 import { Sequelize, DataTypes } from 'sequelize';
 
 import { DB_USER, DB_PASSWORD, DB_HOSTNAME, DB_PORT, DB_NAME } from '$env/static/private';
@@ -11,8 +12,9 @@ import defineEventMember from './entity/EventMember.js';
 const db_conn = new Sequelize(
 	`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOSTNAME}:${DB_PORT}/${DB_NAME}`,
 	{
-		logging: false,
-		pool: { max: 2, min: 0, idle: 0, acquire: 3000 }
+		dialectModule: pg,
+		// logging: false,
+		pool: { max: 2, min: 0, idle: 0, acquire: 5000 }
 	}
 );
 

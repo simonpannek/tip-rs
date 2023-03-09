@@ -7,7 +7,7 @@ export default function (sequelize, DataTypes) {
 		},
 		{
 			sequelize,
-			freezeTableName: true,
+			tableName: 'guild',
 			timestamps: false
 		}
 	);
