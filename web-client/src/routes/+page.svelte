@@ -6,7 +6,7 @@
 	export let data;
 </script>
 
-<ul>
+<ul class="grid gap-6">
 	{#each data.db.guilds as { id }}
 		<Guild guild={$guilds.get(id)} />
 	{/each}

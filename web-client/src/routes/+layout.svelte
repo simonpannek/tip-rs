@@ -25,7 +25,7 @@
 <div class="flex flex-col justify-between min-h-screen">
 	<Header />
 
-	<main class="relative grow p-2 overflow-y-hidden">
+	<main class="relative grow p-8 overflow-y-hidden">
 		<slot />
 	</main>
 
