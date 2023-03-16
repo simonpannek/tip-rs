@@ -2,6 +2,7 @@ import { Guild } from '$lib/server/database.js';
 
 export async function load({ locals }) {
 	if (locals.guilds) {
+		// Get user guilds
 		const guilds = await Guild.findAll({
 			attributes: ['id'],
 			where: {

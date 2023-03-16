@@ -4,8 +4,8 @@ export default function (sequelize, DataTypes) {
 		{
 			id: { type: DataTypes.BIGINT, primaryKey: true },
 			name: { type: DataTypes.TEXT, allowNull: false },
-			guildId: { type: DataTypes.BIGINT, allowNull: false },
-			ownerId: { type: DataTypes.BIGINT, allowNull: true }
+			guild_id: { type: DataTypes.BIGINT, allowNull: false },
+			owner_id: { type: DataTypes.BIGINT, allowNull: true }
 		},
 		{
 			sequelize,

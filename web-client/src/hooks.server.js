@@ -42,7 +42,7 @@ export async function handle({ event, resolve }) {
 			if (guilds_response.length) {
 				event.locals.guilds = new Map(
 					guilds_response.map((guild) => [
-						guild.id,
+						BigInt(guild.id),
 						{
 							id: guild.id,
 							name: guild.name,
