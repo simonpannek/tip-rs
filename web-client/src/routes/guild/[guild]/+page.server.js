@@ -32,7 +32,7 @@ export async function load({ locals, params }) {
 					]
 				}
 			]
-		}).then((events) => events[0]['Events'].map((event) => JSON.parse(JSON.stringify(event))));
+		}).then((events) => events.length && events[0]['Events'] ? events[0]['Events'].map((event) => JSON.parse(JSON.stringify(event))) : []);
 
 		if (!events.length && !locals.guilds.has(guildId)) {
 			throw error(403, 'You are not allowed to access this server.');
