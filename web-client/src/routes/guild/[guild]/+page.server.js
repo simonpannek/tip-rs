@@ -11,28 +11,26 @@ export async function load({ locals, params }) {
 
 	if (locals.guilds) {
 		// Get user events
-		const events = await Guild.findAll({
-			attributes: [],
-			where: {
-				id: guildId,
-				ignore: false
-			},
+		const events = await Event.findAll({
+			attributes: ['id', 'name', 'owner_id'],
 			include: [
 				{
-					model: Event,
-					attributes: ['id', 'name', 'owner_id'],
-					include: [
-						{
-							model: User,
-							attributes: [],
-							where: {
-								id: locals.user.id
-							}
-						}
-					]
+					model: Guild,
+					attributes: [],
+					where: {
+						id: guildId,
+						ignore: false
+					}
+				},
+				{
+					model: User,
+					attributes: [],
+					where: {
+						id: locals.user.id
+					}
 				}
 			]
-		}).then((events) => events.length && events[0]['Events'] ? events[0]['Events'].map((event) => JSON.parse(JSON.stringify(event))) : []);
+		}).then((events) => events.map((event) => JSON.parse(JSON.stringify(event))));
 
 		if (!events.length && !locals.guilds.has(guildId)) {
 			throw error(403, 'You are not allowed to access this server.');

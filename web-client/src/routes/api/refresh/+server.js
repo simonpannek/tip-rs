@@ -28,8 +28,8 @@ export async function GET({ fetch, url }) {
 	const response = await request.json();
 
 	if (response.error) {
-        // Send to login instead if refresh fails
-        throw redirect(302, '/api/login');
+		// Send to login instead if refresh fails
+		throw redirect(302, '/api/login');
 	}
 
 	// Fetch dynamic expire time of access token
