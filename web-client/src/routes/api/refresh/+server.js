@@ -1,4 +1,4 @@
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 
 import { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET } from '$env/static/private';
 
@@ -28,7 +28,8 @@ export async function GET({ fetch, url }) {
 	const response = await request.json();
 
 	if (response.error) {
-		throw error(400, 'Failed to refresh access token');
+		// Send to login instead if refresh fails
+		throw redirect(302, '/api/login');
 	}
 
 	// Fetch dynamic expire time of access token

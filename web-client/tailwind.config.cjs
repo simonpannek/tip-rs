@@ -8,12 +8,11 @@ module.exports = {
 		colors: {
 			transparent: 'transparent',
 			current: 'currentColor',
-			background: {
-				DEFAULT: colors.white[500],
-				...colors.white,
-				dark: '#0000000'
+			primary: {
+				DEFAULT: '#ffffff',
+				...colors.slate
 			},
-			foreground: { DEFAULT: colors.gray[600], ...colors.gray },
+			secondary: { DEFAULT: colors.gray[600], ...colors.gray },
 			accent1: { DEFAULT: colors.cyan[600], ...colors.cyan },
 			accent2: { DEFAULT: colors.red[600], ...colors.red }
 		},

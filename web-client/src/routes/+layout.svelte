@@ -1,14 +1,15 @@
 <script>
 	import '../app.css';
 
-	import { user } from '$lib/auth.js';
+	import { user, guilds } from '$lib/auth.js';
 
 	import Header from '$lib/Header.svelte';
 	import Footer from '$lib/Footer.svelte';
 
 	export let data;
 
-	$: user && user.set(data.user);
+	$: $user = data.user;
+	$: $guilds = data.guilds;
 </script>
 
 <svelte:head>
@@ -24,7 +25,7 @@
 <div class="flex flex-col justify-between min-h-screen">
 	<Header />
 
-	<main class="relative grow p-2 overflow-y-hidden">
+	<main class="relative grow p-8 overflow-y-hidden">
 		<slot />
 	</main>
 

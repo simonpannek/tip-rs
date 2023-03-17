@@ -16,20 +16,42 @@ export async function handle({ event, resolve }) {
 
 	if (access_token) {
 		// Request user information using the access token
-		const request = await fetch('https://discordapp.com/api/users/@me', {
+		const user_request = await fetch('https://discordapp.com/api/users/@me', {
 			headers: { Authorization: `Bearer ${access_token}` }
 		});
 
 		// Parse response
-		const response = await request.json();
+		const user_response = await user_request.json();
 
-		if (response.id) {
+		if (user_response.id) {
 			event.locals.user = {
-				id: response.id,
-				username: response.username,
-				discriminator: response.discriminator,
-				avatar: response.avatar
+				id: user_response.id,
+				username: user_response.username,
+				discriminator: user_response.discriminator,
+				avatar: user_response.avatar
 			};
+
+			// Request guilds information
+			const guilds_request = await fetch('https://discordapp.com/api/users/@me/guilds', {
+				headers: { Authorization: `Bearer ${access_token}` }
+			});
+
+			// Parse response
+			const guilds_response = await guilds_request.json();
+
+			if (guilds_response.length) {
+				event.locals.guilds = new Map(
+					guilds_response.map((guild) => [
+						BigInt(guild.id),
+						{
+							id: guild.id,
+							name: guild.name,
+							owner: guild.owner,
+							icon: guild.icon
+						}
+					])
+				);
+			}
 		}
 	}
 
