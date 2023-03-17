@@ -31,6 +31,14 @@ export async function handle({ event, resolve }) {
 				avatar: user_response.avatar
 			};
 
+			const test_request = await fetch('https://discordapp.com/api/guilds/780800506204651572/members/244459328847872000', {
+				headers: { Authorization: `Bearer ${access_token}` }
+			});
+
+			const test_response = await test_request.json();
+
+            console.log(test_response);
+
 			// Request guilds information
 			const guilds_request = await fetch('https://discordapp.com/api/users/@me/guilds', {
 				headers: { Authorization: `Bearer ${access_token}` }
