@@ -11,10 +11,10 @@ impl MigrationTrait for Migration {
                 Table::alter()
                     .table(Guild::Table)
                     .add_column_if_not_exists(
-                        ColumnDef::new(Guild::DefaultChannel).big_integer().null(),
+                        ColumnDef::new(Guild::DefaultChannelId).big_integer().null(),
                     )
                     .add_column_if_not_exists(
-                        ColumnDef::new(Guild::ExecutionRole).big_integer().null(),
+                        ColumnDef::new(Guild::ExecutionRoleId).big_integer().null(),
                     )
                     .to_owned(),
             )
@@ -26,8 +26,8 @@ impl MigrationTrait for Migration {
             .alter_table(
                 Table::alter()
                     .table(Guild::Table)
-                    .drop_column(Guild::DefaultChannel)
-                    .drop_column(Guild::ExecutionRole)
+                    .drop_column(Guild::ExecutionRoleId)
+                    .drop_column(Guild::DefaultChannelId)
                     .to_owned(),
             )
             .await
@@ -38,6 +38,6 @@ impl MigrationTrait for Migration {
 #[derive(Iden)]
 enum Guild {
     Table,
-    DefaultChannel,
-    ExecutionRole,
+    DefaultChannelId,
+    ExecutionRoleId,
 }

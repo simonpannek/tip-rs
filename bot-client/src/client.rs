@@ -5,7 +5,7 @@ use migration::{Migrator, MigratorTrait};
 use poise::{serenity_prelude as serenity, Framework, FrameworkError};
 use sea_orm::{Database, DatabaseConnection};
 
-use crate::commands::*;
+use crate::{commands::*, utils::create_embed};
 
 /// User data
 pub struct Data {
@@ -37,6 +37,19 @@ impl Client {
                 on_error: |why| {
                     Box::pin(async move {
                         match why {
+                            // Send command errors as embeds
+                            FrameworkError::Command { ctx, error } => {
+                                let embed = create_embed(
+                                    "Something went wrong",
+                                    &format!("**I couldn't execute the command:** {}", error),
+                                );
+                                ctx.send(|reply| {
+                                    reply.embeds = vec![embed];
+                                    reply
+                                })
+                                .await
+                                .unwrap();
+                            }
                             // Overwrite on_error behavior when check fails
                             FrameworkError::CommandCheckFailed { ctx, error: None } => {
                                 let response = "It looks like you're missing the execution role.";

@@ -29,12 +29,12 @@ async fn channel(
     guild::Entity::insert(guild::ActiveModel {
         // Unwrap is safe here due to guild_only constraint
         id: Set(ctx.guild_id().unwrap().0 as i64),
-        default_channel: Set(Some(channel.id().0 as i64)),
+        default_channel_id: Set(Some(channel.id().0 as i64)),
         ..Default::default()
     })
     .on_conflict(
         OnConflict::column(guild::Column::Id)
-            .update_column(guild::Column::DefaultChannel)
+            .update_column(guild::Column::DefaultChannelId)
             .to_owned(),
     )
     .exec(&ctx.data().db_conn)
@@ -65,12 +65,12 @@ async fn role(
     guild::Entity::insert(guild::ActiveModel {
         // Unwrap is safe here due to guild_only constraint
         id: Set(ctx.guild_id().unwrap().0 as i64),
-        execution_role: Set(Some(role.id.0 as i64)),
+        execution_role_id: Set(Some(role.id.0 as i64)),
         ..Default::default()
     })
     .on_conflict(
         OnConflict::column(guild::Column::Id)
-            .update_column(guild::Column::ExecutionRole)
+            .update_column(guild::Column::ExecutionRoleId)
             .to_owned(),
     )
     .exec(&ctx.data().db_conn)

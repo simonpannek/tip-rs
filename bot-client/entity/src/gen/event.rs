@@ -11,6 +11,11 @@ pub struct Model {
     pub name: String,
     pub guild_id: i64,
     pub owner_id: Option<i64>,
+    #[sea_orm(column_type = "Text")]
+    pub description: String,
+    pub channel_id: Option<i64>,
+    pub role_id: Option<i64>,
+    pub announcement_channel_id: Option<i64>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

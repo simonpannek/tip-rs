@@ -2,6 +2,7 @@ pub use sea_orm_migration::prelude::*;
 
 mod m20230226_213739_create_initial_tables;
 mod m20230321_070938_add_settings;
+mod m20230327_161531_add_basic_event_fields;
 
 pub struct Migrator;
 
@@ -11,6 +12,7 @@ impl MigratorTrait for Migrator {
         vec![
             Box::new(m20230226_213739_create_initial_tables::Migration),
             Box::new(m20230321_070938_add_settings::Migration),
+            Box::new(m20230327_161531_add_basic_event_fields::Migration),
         ]
     }
 }

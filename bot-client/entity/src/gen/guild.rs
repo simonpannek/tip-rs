@@ -8,8 +8,8 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: i64,
     pub ignore: bool,
-    pub default_channel: Option<i64>,
-    pub execution_role: Option<i64>,
+    pub default_channel_id: Option<i64>,
+    pub execution_role_id: Option<i64>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
