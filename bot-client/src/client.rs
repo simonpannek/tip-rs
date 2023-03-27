@@ -2,7 +2,7 @@ use std::{env, sync::Arc};
 
 use anyhow::{Context, Error, Result};
 use migration::{Migrator, MigratorTrait};
-use poise::{serenity_prelude as serenity, Framework};
+use poise::{serenity_prelude as serenity, Framework, FrameworkError};
 use sea_orm::{Database, DatabaseConnection};
 
 use crate::commands::*;
@@ -34,6 +34,22 @@ impl Client {
             .intents(serenity::GatewayIntents::non_privileged())
             .options(poise::FrameworkOptions {
                 commands: vec![event::event(), ping::ping(), settings::settings()],
+                on_error: |why| {
+                    Box::pin(async move {
+                        match why {
+                            // Overwrite on_error behavior when check fails
+                            FrameworkError::CommandCheckFailed { ctx, error: None } => {
+                                let response = "It looks like you're missing the execution role.";
+                                ctx.send(|b| b.content(response).ephemeral(true))
+                                    .await
+                                    .unwrap();
+                            }
+                            why => {
+                                poise::builtins::on_error(why).await.unwrap();
+                            }
+                        }
+                    })
+                },
                 require_cache_for_guild_check: true,
                 ..Default::default()
             })
