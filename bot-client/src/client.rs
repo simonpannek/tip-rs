@@ -31,9 +31,10 @@ impl Client {
         // Build the framework
         let framework = Framework::builder()
             .token(token)
-            .intents(serenity::GatewayIntents::empty())
+            .intents(serenity::GatewayIntents::non_privileged())
             .options(poise::FrameworkOptions {
-                commands: vec![ping::ping()],
+                commands: vec![event::event(), ping::ping(), settings::settings()],
+                require_cache_for_guild_check: true,
                 ..Default::default()
             })
             .setup(|ctx, ready, framework| Box::pin(Self::client_ready(ctx, ready, framework)))
