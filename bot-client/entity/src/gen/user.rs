@@ -7,6 +7,10 @@ use sea_orm::entity::prelude::*;
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: i64,
+    #[sea_orm(column_type = "Text")]
+    pub name: String,
+    #[sea_orm(column_type = "Text", nullable)]
+    pub avatar: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

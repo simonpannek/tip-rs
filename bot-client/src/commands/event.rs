@@ -27,15 +27,17 @@ pub async fn event(
     announcement_channel: Option<serenity::Channel>,
     #[description = "Event id (in case you want to overwrite)"] id: Option<i32>,
 ) -> Result<()> {
+    let author = ctx.author();
+
     // Create user
     user::Entity::insert(user::ActiveModel {
-        id: Set(ctx.author().id.0 as i64),
+        id: Set(author.id.0 as i64),
+        name: Set(format!("{}#{}", author.name, author.discriminator)),
+        avatar: Set(author.avatar.clone()),
     })
-    // TODO: Replace the update statement with an update user name
-    // statement, as soon as we change the table structure
     .on_conflict(
         OnConflict::column(user::Column::Id)
-            .update_column(user::Column::Id)
+            .update_columns([user::Column::Name, user::Column::Avatar])
             .to_owned(),
     )
     .exec(&ctx.data().db_conn)
@@ -55,7 +57,7 @@ pub async fn event(
         name: Set(name.clone()),
         // Unwrap is safe here due to guild_only constraint
         guild_id: Set(ctx.guild_id().unwrap().0 as i64),
-        owner_id: Set(Some(ctx.author().id.0 as i64)),
+        owner_id: Set(Some(author.id.0 as i64)),
         description: Set(description),
         channel_id: Set(Some(channel.id().0 as i64)),
         role_id: Set(Some(role.id.0 as i64)),
@@ -70,7 +72,7 @@ pub async fn event(
                 event::Column::RoleId,
                 event::Column::AnnouncementChannelId,
             ])
-            .action_and_where(event::Column::OwnerId.eq(ctx.author().id.0 as i64))
+            .action_and_where(event::Column::OwnerId.eq(author.id.0 as i64))
             .to_owned(),
     )
     .exec(&ctx.data().db_conn)
