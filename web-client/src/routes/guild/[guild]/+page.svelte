@@ -4,7 +4,7 @@
 	export let data;
 </script>
 
-<ul class="grid gap-6">
+<ul class="grid grid-cols-2 gap-6">
 	{#each data.db.events as event}
 		<Event {event} />
 	{/each}
