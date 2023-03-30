@@ -3,10 +3,13 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "user")]
+#[sea_orm(table_name = "guild")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: i64,
+    pub ignore: bool,
+    pub default_channel_id: Option<i64>,
+    pub execution_role_id: Option<i64>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -17,10 +20,7 @@ pub enum Relation {
 
 impl Related<super::event::Entity> for Entity {
     fn to() -> RelationDef {
-        super::event_member::Relation::Event.def()
-    }
-    fn via() -> Option<RelationDef> {
-        Some(super::event_member::Relation::User.def().rev())
+        Relation::Event.def()
     }
 }
 

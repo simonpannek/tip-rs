@@ -3,7 +3,9 @@ export default function (sequelize, DataTypes) {
 		'Guild',
 		{
 			id: { type: DataTypes.BIGINT, primaryKey: true },
-			ignore: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
+			ignore: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+			default_channel_id: { type: DataTypes.BIGINT, allowNull: true },
+			execution_role_id: { type: DataTypes.BIGINT, allowNull: true }
 		},
 		{
 			sequelize,
