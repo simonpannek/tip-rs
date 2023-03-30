@@ -12,7 +12,7 @@ export async function load({ locals, params }) {
 	if (locals.guilds) {
 		// Get user events
 		const events = await Event.findAll({
-			attributes: ['id', 'name', 'owner_id', 'description'],
+			attributes: ['id', 'name', 'description'],
 			include: [
 				{
 					model: Guild,
@@ -28,6 +28,11 @@ export async function load({ locals, params }) {
 					where: {
 						id: locals.user.id
 					}
+				},
+				{
+					model: User,
+					as: 'owner',
+					attributes: ['id', 'name', 'avatar']
 				}
 			]
 		}).then((events) => events.map((event) => JSON.parse(JSON.stringify(event))));

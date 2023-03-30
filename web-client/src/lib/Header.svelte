@@ -56,7 +56,7 @@
 							class:text-accent2={item.href === $page.url.pathname}
 							class:border-b-2={item.href === $page.url.pathname}
 							target={item.new_tab && '_blank'}
-							rel={item.new_tab && '_noreferrer'}
+							rel={item.new_tab && 'noreferrer'}
 						>
 							{item.label}
 						</a>
