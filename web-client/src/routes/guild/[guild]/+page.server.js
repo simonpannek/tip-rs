@@ -12,7 +12,7 @@ export async function load({ locals, params }) {
 	if (locals.guilds) {
 		// Get user events
 		const events = await Event.findAll({
-			attributes: ['id', 'name', 'owner_id'],
+			attributes: ['id', 'name', 'owner_id', 'description'],
 			include: [
 				{
 					model: Guild,
