@@ -2,10 +2,11 @@ use std::{env, sync::Arc};
 
 use anyhow::{Context, Error, Result};
 use migration::{Migrator, MigratorTrait};
-use poise::{serenity_prelude as serenity, Framework, FrameworkError};
+use poise::{serenity_prelude as serenity, Event, Framework, FrameworkError};
 use sea_orm::{Database, DatabaseConnection};
+use tracing::error;
 
-use crate::{commands::*, utils::create_embed};
+use crate::{commands::*, events::*, utils::create_embed};
 
 /// User data
 pub struct Data {
@@ -31,7 +32,10 @@ impl Client {
         // Build the framework
         let framework = Framework::builder()
             .token(token)
-            .intents(serenity::GatewayIntents::non_privileged())
+            .intents(
+                serenity::GatewayIntents::non_privileged()
+                    | serenity::GatewayIntents::GUILD_MEMBERS,
+            )
             .options(poise::FrameworkOptions {
                 commands: vec![event::event(), ping::ping(), settings::settings()],
                 on_error: |why| {
@@ -58,9 +62,37 @@ impl Client {
                                     .unwrap();
                             }
                             why => {
-                                poise::builtins::on_error(why).await.unwrap();
+                                if let Err(why) = poise::builtins::on_error(why).await {
+                                    error!("Failed to send error message: {}", why);
+                                }
                             }
                         }
+                    })
+                },
+                event_handler: |_ctx, event, _framework, data| {
+                    Box::pin(async move {
+                        match event {
+                            Event::GuildDelete { incomplete, .. } => {
+                                guild_delete::on_guild_delete(data, incomplete).await?;
+                            }
+                            Event::ChannelDelete { channel } => {
+                                guild_channel_delete::on_channel_delete(data, channel).await?;
+                            }
+                            Event::GuildRoleDelete {
+                                guild_id,
+                                removed_role_id,
+                                ..
+                            } => {
+                                guild_role_delete::on_role_delete(data, guild_id, removed_role_id)
+                                    .await?;
+                            }
+                            Event::GuildMemberUpdate { new, .. } => {
+                                guild_member_update::on_member_update(data, new).await?;
+                            }
+                            _ => {}
+                        }
+
+                        Ok(())
                     })
                 },
                 require_cache_for_guild_check: true,
@@ -107,6 +139,10 @@ impl Client {
     }
 
     pub async fn start(&mut self) -> Result<()> {
-        self.framework.clone().start().await.map_err(Error::msg)
+        self.framework
+            .clone()
+            .start_autosharded()
+            .await
+            .map_err(Error::msg)
     }
 }
