@@ -3,7 +3,7 @@
 </script>
 
 <li id={event.id} class="h-60 relative rounded-xl overflow-clip drop-shadow-md text-primary">
-	<a href="event/{event.id}" class="hover:opacity-95 ease-linear duration-100">
+	<a href="event/{event.id}/" class="hover:opacity-95 ease-linear duration-100">
 		<div
 			style:background="center/cover rgba(0, 0, 0, 0.7)"
 			class="h-full blur-lg scale-125 bg-blend-darken"

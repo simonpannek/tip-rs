@@ -5,7 +5,7 @@
 </script>
 
 <li id={guild.id} class="h-80 relative rounded-xl overflow-clip drop-shadow-md text-primary">
-	<a href="guild/{guild.id}" class="hover:opacity-95 ease-linear duration-100">
+	<a href="guild/{guild.id}/" class="hover:opacity-95 ease-linear duration-100">
 		<div
 			style:background="center/cover rgba(0, 0, 0, 0.7) url({icon})"
 			class="h-full blur-lg scale-125 bg-blend-darken"

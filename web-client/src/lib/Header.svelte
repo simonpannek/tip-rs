@@ -7,7 +7,7 @@
 
 	const navItems = [
 		{ label: 'Home', href: '/' },
-		{ label: 'About', href: '/about' },
+		{ label: 'About', href: '/about/' },
 		{ label: 'GitHub', href: 'https://github.com/simonpannek/tip-rs/', new_tab: true }
 	];
 
