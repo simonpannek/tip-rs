@@ -27,6 +27,8 @@ const EventMember = defineEventMember(db_conn, DataTypes);
 // Define relationships
 Guild.hasMany(Event, { foreignKey: 'guild_id' });
 Event.belongsTo(Guild, { foreignKey: 'guild_id' });
+User.hasMany(Event, { foreignKey: 'owner_id' });
+Event.belongsTo(User, { as: 'owner', foreignKey: 'owner_id' });
 User.belongsToMany(Event, { through: EventMember, foreignKey: 'user_id', otherKey: 'event_id' });
 Event.belongsToMany(User, { through: EventMember, foreignKey: 'event_id', otherKey: 'user_id' });
 

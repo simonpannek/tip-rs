@@ -7,11 +7,16 @@ export async function load({ locals, params }) {
 		throw error(400, 'Invalid guild id.');
 	}
 
+	if (isNaN(params.event)) {
+		throw error(400, 'Invalid event id.');
+	}
+
 	const guildId = BigInt(params.guild);
+	const eventId = BigInt(params.event);
 
 	if (locals.guilds) {
-		// Get user events
-		const events = await Event.findAll({
+		// Get event info
+		const event = await Event.findByPk(eventId, {
 			attributes: ['id', 'name', 'description'],
 			include: [
 				{
@@ -35,13 +40,13 @@ export async function load({ locals, params }) {
 					attributes: ['id', 'name', 'avatar']
 				}
 			]
-		}).then((events) => events.map((event) => JSON.parse(JSON.stringify(event))));
+		}).then((event) => JSON.parse(JSON.stringify(event)));
 
-		if (!events.length && !locals.guilds.has(guildId)) {
-			throw error(403, 'You are not allowed to access this server.');
+		if (!event) {
+			throw error(403, 'You are not allowed to access this event.');
 		}
 
-		return { db: { events } };
+		return { db: { event } };
 	} else {
 		throw error(401, 'Could not check whether you are a member of this server.');
 	}
