@@ -42,7 +42,7 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(Event::Id)
-                            .integer()
+                            .big_integer()
                             .auto_increment()
                             .primary_key(),
                     )

@@ -6,7 +6,7 @@ use sea_orm::entity::prelude::*;
 #[sea_orm(table_name = "event")]
 pub struct Model {
     #[sea_orm(primary_key)]
-    pub id: i32,
+    pub id: i64,
     #[sea_orm(column_type = "Text")]
     pub name: String,
     pub guild_id: i64,
@@ -28,6 +28,8 @@ pub enum Relation {
         on_delete = "Cascade"
     )]
     Guild,
+    #[sea_orm(has_many = "super::scheduled_action::Entity")]
+    ScheduledAction,
     #[sea_orm(
         belongs_to = "super::user::Entity",
         from = "Column::OwnerId",
@@ -41,6 +43,12 @@ pub enum Relation {
 impl Related<super::guild::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Guild.def()
+    }
+}
+
+impl Related<super::scheduled_action::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::ScheduledAction.def()
     }
 }
 

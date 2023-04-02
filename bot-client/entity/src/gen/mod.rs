@@ -5,4 +5,5 @@ pub mod prelude;
 pub mod event;
 pub mod event_member;
 pub mod guild;
+pub mod scheduled_action;
 pub mod user;
