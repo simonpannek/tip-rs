@@ -12,7 +12,7 @@
 			class="flex flex-col items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
 		>
 			<h3 class="text-2xl mt-3">{event.name}</h3>
-			<h4 class="text-xl mt-3">{event.description}</h4>
+			<h4 class="text-lg text-center mt-3">{event.description}</h4>
 		</div>
 	</a>
 
