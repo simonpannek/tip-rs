@@ -2,7 +2,7 @@ use std::{env, sync::Arc};
 
 use anyhow::{Context, Error, Result};
 use migration::{Migrator, MigratorTrait};
-use poise::{serenity_prelude as serenity, Event, Framework, FrameworkError};
+use poise::{serenity_prelude as serenity, Event, FrameworkError};
 use sea_orm::{Database, DatabaseConnection};
 use tracing::error;
 
@@ -15,7 +15,7 @@ pub struct Data {
 
 /// The bot client
 pub struct Client {
-    framework: Arc<Framework<Data, Error>>,
+    framework: Arc<poise::Framework<Data, Error>>,
 }
 
 impl Client {
@@ -30,7 +30,7 @@ impl Client {
 
     pub async fn new(token: String) -> Result<Self> {
         // Build the framework
-        let framework = Framework::builder()
+        let framework = poise::Framework::builder()
             .token(token)
             .intents(
                 serenity::GatewayIntents::non_privileged()
@@ -69,25 +69,32 @@ impl Client {
                         }
                     })
                 },
-                event_handler: |_ctx, event, _framework, data| {
+                event_handler: |ctx, event, framework, _data| {
                     Box::pin(async move {
                         match event {
+                            Event::Ready { .. } => {
+                                ready::on_ready(ctx, framework).await?;
+                            }
                             Event::GuildDelete { incomplete, .. } => {
-                                guild_delete::on_guild_delete(data, incomplete).await?;
+                                guild_delete::on_guild_delete(framework, incomplete).await?;
                             }
                             Event::ChannelDelete { channel } => {
-                                guild_channel_delete::on_channel_delete(data, channel).await?;
+                                guild_channel_delete::on_channel_delete(framework, channel).await?;
                             }
                             Event::GuildRoleDelete {
                                 guild_id,
                                 removed_role_id,
                                 ..
                             } => {
-                                guild_role_delete::on_role_delete(data, guild_id, removed_role_id)
-                                    .await?;
+                                guild_role_delete::on_role_delete(
+                                    framework,
+                                    guild_id,
+                                    removed_role_id,
+                                )
+                                .await?;
                             }
                             Event::GuildMemberUpdate { new, .. } => {
-                                guild_member_update::on_member_update(data, new).await?;
+                                guild_member_update::on_member_update(framework, new).await?;
                             }
                             _ => {}
                         }
@@ -108,7 +115,7 @@ impl Client {
     async fn client_ready(
         ctx: &serenity::Context,
         _ready: &serenity::Ready,
-        framework: &Framework<Data, Error>,
+        framework: &poise::Framework<Data, Error>,
     ) -> Result<Data> {
         // Get DB connection parameters
         let db_user = env::var("DB_USER").context("Environmental variable 'DB_USER' not found")?;

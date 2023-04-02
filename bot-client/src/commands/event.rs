@@ -25,7 +25,9 @@ pub async fn event(
     #[description = "Announcement channel (if not set, use server default as fallback)"]
     #[channel_types("Text")]
     announcement_channel: Option<serenity::Channel>,
-    #[description = "Event id (in case you want to overwrite)"] id: Option<i64>,
+    #[description = "Event id (custom id/overwrite existing event)"]
+    #[min = 1]
+    id: Option<i64>,
 ) -> Result<()> {
     let author = ctx.author();
 
