@@ -7,8 +7,6 @@ use sea_orm::entity::prelude::*;
 pub enum ActionType {
     #[sea_orm(string_value = "SendMessage")]
     SendMessage,
-    #[sea_orm(string_value = "EditMessage")]
-    EditMessage,
     #[sea_orm(string_value = "CreateSurvey")]
     CreateSurvey,
     #[sea_orm(string_value = "ResolveSurvey")]
@@ -21,6 +19,7 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64,
     pub event_id: i64,
+    pub parent_action_id: Option<i64>,
     pub time: DateTimeWithTimeZone,
     pub executed: bool,
     #[sea_orm(column_type = "Text")]
@@ -39,6 +38,14 @@ pub enum Relation {
         on_delete = "Cascade"
     )]
     Event,
+    #[sea_orm(
+        belongs_to = "Entity",
+        from = "Column::ParentActionId",
+        to = "Column::Id",
+        on_update = "NoAction",
+        on_delete = "SetNull"
+    )]
+    SelfRef,
 }
 
 impl Related<super::event::Entity> for Entity {

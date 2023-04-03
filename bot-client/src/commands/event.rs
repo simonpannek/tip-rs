@@ -107,7 +107,6 @@ pub async fn event(
 }
 
 async fn check_execution(ctx: Context<'_>) -> Result<bool> {
-    // Unwrap is safe here due to guild_only constraint
     let execution_role = guild::Entity::find_by_id(ctx.guild_id().unwrap().0 as i64)
         .one(&ctx.data().db_conn)
         .await?

@@ -24,6 +24,11 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(
+                        ColumnDef::new(ScheduledAction::ParentActionId)
+                            .big_integer()
+                            .null(),
+                    )
+                    .col(
                         ColumnDef::new(ScheduledAction::Time)
                             .timestamp_with_time_zone()
                             .not_null(),
@@ -51,6 +56,13 @@ impl MigrationTrait for Migration {
                             .to(Event::Table, Event::Id)
                             .on_delete(ForeignKeyAction::Cascade),
                     )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk-scheduled_action-parent_action_id")
+                            .from(ScheduledAction::Table, ScheduledAction::ParentActionId)
+                            .to(ScheduledAction::Table, ScheduledAction::Id)
+                            .on_delete(ForeignKeyAction::SetNull),
+                    )
                     .to_owned(),
             )
             .await
@@ -58,6 +70,15 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         // Drop ScheduledAction
+        manager
+            .drop_foreign_key(
+                ForeignKey::drop()
+                    .table(ScheduledAction::Table)
+                    .name("fk-scheduled_action-parent_action_id")
+                    .to_owned(),
+            )
+            .await?;
+
         manager
             .drop_foreign_key(
                 ForeignKey::drop()
@@ -79,6 +100,7 @@ enum ScheduledAction {
     Table,
     Id,
     EventId,
+    ParentActionId,
     Time,
     Executed,
     ActionType,
