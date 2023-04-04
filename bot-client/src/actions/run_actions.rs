@@ -1,6 +1,5 @@
 use anyhow::{Error, Result};
 use entity::{
-    action_data::SendMessageData,
     event, guild,
     scheduled_action::{self, ActionType},
 };
@@ -9,6 +8,7 @@ use sea_orm::{
     ActiveModelTrait, ActiveValue::Set, ColumnTrait, EntityTrait, ModelTrait, PaginatorTrait,
     QueryFilter, QueryOrder,
 };
+use tracing::error;
 
 use crate::{actions::*, client::Data};
 
@@ -26,17 +26,6 @@ pub async fn run_actions(
         .order_by_asc(scheduled_action::Column::Time)
         .paginate(&framework.user_data.db_conn, 50);
 
-    let data = SendMessageData {
-        title: "Test".to_string(),
-        description: "Test description".to_string(),
-        color: None,
-        announcement: false,
-        channel_id: None,
-        message_id: None,
-    };
-
-    println!("DATA: {}", serde_json::to_string(&data)?);
-
     while let Some(actions) = action_pages.fetch_and_next().await? {
         for (action, event) in actions {
             // Unwrap is safe here due to database constraint 'fk-scheduled_action-event_id'
@@ -52,20 +41,30 @@ pub async fn run_actions(
             // Execute action
             let action_data = match action.action_type {
                 ActionType::SendMessage => {
-                    send_message::send_message(ctx, framework, &action, &event, &guild).await?
+                    send_message::send_message(ctx, framework, &action, &event, &guild).await
                 }
                 ActionType::CreateSurvey => {
-                    create_survey::create_survey(ctx, framework, &action, &event, &guild).await?
+                    create_survey::create_survey(ctx, framework, &action, &event, &guild).await
                 }
                 ActionType::ResolveSurvey => {
-                    resolve_survey::resolve_survey(ctx, framework, &action, &event, &guild).await?
+                    resolve_survey::resolve_survey(ctx, framework, &action, &event, &guild).await
                 }
             };
 
             // Mark action as executed
             let mut action: scheduled_action::ActiveModel = action.into();
             action.executed = Set(true);
-            action.action_data = Set(action_data);
+
+            match action_data {
+                Ok(action_data) => {
+                    // Update action data
+                    action.action_data = Set(action_data);
+                }
+                Err(why) => {
+                    error!("Failed to execute action for event {}: {}", event.id, why);
+                }
+            }
+
             action.update(&framework.user_data.db_conn).await?;
         }
     }

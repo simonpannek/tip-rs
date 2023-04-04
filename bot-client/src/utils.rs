@@ -21,7 +21,7 @@ pub async fn create_or_edit_message(
     message_id: Option<serenity::MessageId>,
     embed: CreateEmbed,
 ) -> Result<serenity::Message> {
-    let result = match message_id {
+    let message = match message_id {
         Some(message_id) => {
             channel_id
                 .edit_message(http, message_id, |edit| edit.set_embed(embed))
@@ -34,5 +34,5 @@ pub async fn create_or_edit_message(
         }
     };
 
-    Ok(result)
+    Ok(message)
 }

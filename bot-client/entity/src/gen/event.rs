@@ -30,6 +30,8 @@ pub enum Relation {
     Guild,
     #[sea_orm(has_many = "super::scheduled_action::Entity")]
     ScheduledAction,
+    #[sea_orm(has_many = "super::survey_question::Entity")]
+    SurveyQuestion,
     #[sea_orm(
         belongs_to = "super::user::Entity",
         from = "Column::OwnerId",
@@ -49,6 +51,12 @@ impl Related<super::guild::Entity> for Entity {
 impl Related<super::scheduled_action::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::ScheduledAction.def()
+    }
+}
+
+impl Related<super::survey_question::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::SurveyQuestion.def()
     }
 }
 
