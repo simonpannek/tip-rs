@@ -96,6 +96,14 @@ impl Client {
                             Event::GuildMemberUpdate { new, .. } => {
                                 guild_member_update::on_member_update(framework, new).await?;
                             }
+                            Event::InteractionCreate { interaction } => {
+                                interaction_create::on_interaction_create(
+                                    ctx,
+                                    framework,
+                                    &interaction,
+                                )
+                                .await?;
+                            }
                             _ => {}
                         }
 

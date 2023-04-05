@@ -51,7 +51,7 @@ pub async fn create_survey(
             let result = survey_question::Entity::insert(survey_question::ActiveModel {
                 event_id: Set(action.event_id),
                 message_id: Set(message_id.0 as i64),
-                question: Set(option.question.clone()),
+                question_data: Set(serde_json::to_value(option.clone())?),
                 ..Default::default()
             })
             .exec(&framework.user_data.db_conn)

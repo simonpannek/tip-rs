@@ -28,7 +28,11 @@ impl MigrationTrait for Migration {
                             .big_integer()
                             .not_null(),
                     )
-                    .col(ColumnDef::new(SurveyQuestion::Question).text().not_null())
+                    .col(
+                        ColumnDef::new(SurveyQuestion::QuestionData)
+                            .json_binary()
+                            .not_null(),
+                    )
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk-survey_question-event_id")
@@ -129,7 +133,7 @@ enum SurveyQuestion {
     Id,
     EventId,
     MessageId,
-    Question,
+    QuestionData,
 }
 
 #[derive(Iden)]

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize)]
 pub struct SendMessageData {
     pub title: String,
     pub description: String,
@@ -10,21 +10,21 @@ pub struct SendMessageData {
     pub message_id: Option<i64>,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize)]
 pub struct CreateSurveyData {
-    pub survey_options: Vec<SurveyOption>,
+    pub survey_options: Vec<SurveyQuestion>,
     pub preliminary_result: bool,
 }
 
-#[derive(Deserialize, Serialize)]
-pub struct SurveyOption {
+#[derive(Clone, Deserialize, Serialize)]
+pub struct SurveyQuestion {
     pub label: String,
     pub question: String,
-    pub response: SurveyResponse,
+    pub response_options: SurveyResponseOption,
 }
 
-#[derive(Deserialize, Serialize)]
-pub enum SurveyResponse {
+#[derive(Clone, Deserialize, Serialize)]
+pub enum SurveyResponseOption {
     SelectMenu(Vec<String>),
-    InputText(String),
+    InputText,
 }

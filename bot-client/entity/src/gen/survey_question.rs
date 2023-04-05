@@ -9,8 +9,8 @@ pub struct Model {
     pub id: i64,
     pub event_id: i64,
     pub message_id: i64,
-    #[sea_orm(column_type = "Text")]
-    pub question: String,
+    #[sea_orm(column_type = "JsonBinary")]
+    pub question_data: Json,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
