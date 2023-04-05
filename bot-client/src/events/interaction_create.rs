@@ -1,13 +1,13 @@
 use anyhow::{Error, Result};
 use entity::{
     action_data::{SurveyQuestion, SurveyResponseOption},
-    survey_question, survey_response,
+    survey_question, survey_response, user,
 };
 use poise::serenity_prelude::{
     self as serenity, model::application::interaction::Interaction, ActionRowComponent,
     ComponentType, InputTextStyle, InteractionResponseType,
 };
-use sea_orm::{ActiveValue::Set, ColumnTrait, EntityTrait, QueryFilter};
+use sea_orm::{sea_query::OnConflict, ActiveValue::Set, ColumnTrait, EntityTrait, QueryFilter};
 
 use crate::{client::Data, utils::create_embed};
 
@@ -47,6 +47,7 @@ pub async fn on_interaction_create(
                                     input_text
                                         .custom_id(&interaction.data.custom_id)
                                         .placeholder("Select your response")
+                                        .max_values(select_options.len() as u64)
                                         .options(|options| options.set_options(select_options))
                                 });
 
@@ -95,8 +96,24 @@ pub async fn on_interaction_create(
                     }
                 }
                 ComponentType::SelectMenu => {
+                    let user = &interaction.user;
+
                     let question_id = interaction.data.custom_id.parse()?;
-                    let user_id = interaction.user.id.0 as i64;
+                    let user_id = user.id.0 as i64;
+
+                    // Create user
+                    user::Entity::insert(user::ActiveModel {
+                        id: Set(user.id.0 as i64),
+                        name: Set(format!("{}#{}", user.name, user.discriminator)),
+                        avatar: Set(user.avatar.clone()),
+                    })
+                    .on_conflict(
+                        OnConflict::column(user::Column::Id)
+                            .update_columns([user::Column::Name, user::Column::Avatar])
+                            .to_owned(),
+                    )
+                    .exec(&framework.user_data.db_conn)
+                    .await?;
 
                     survey_response::Entity::delete_many()
                         .filter(
@@ -116,13 +133,13 @@ pub async fn on_interaction_create(
                         })
                         .exec(&framework.user_data.db_conn)
                         .await?;
-
-                        interaction
-                            .create_interaction_response(&ctx.http, |response| {
-                                response.kind(InteractionResponseType::DeferredUpdateMessage)
-                            })
-                            .await?;
                     }
+
+                    interaction
+                        .create_interaction_response(&ctx.http, |response| {
+                            response.kind(InteractionResponseType::DeferredUpdateMessage)
+                        })
+                        .await?;
                 }
                 _ => {}
             }
@@ -133,8 +150,24 @@ pub async fn on_interaction_create(
             if let Some(row) = interaction.data.components.first() {
                 if let Some(component) = row.components.first() {
                     if let ActionRowComponent::InputText(input_text) = component {
+                        let user = &interaction.user;
+
                         let question_id = interaction.data.custom_id.parse()?;
-                        let user_id = interaction.user.id.0 as i64;
+                        let user_id = user.id.0 as i64;
+
+                        // Create user
+                        user::Entity::insert(user::ActiveModel {
+                            id: Set(user.id.0 as i64),
+                            name: Set(format!("{}#{}", user.name, user.discriminator)),
+                            avatar: Set(user.avatar.clone()),
+                        })
+                        .on_conflict(
+                            OnConflict::column(user::Column::Id)
+                                .update_columns([user::Column::Name, user::Column::Avatar])
+                                .to_owned(),
+                        )
+                        .exec(&framework.user_data.db_conn)
+                        .await?;
 
                         survey_response::Entity::delete_many()
                             .filter(
