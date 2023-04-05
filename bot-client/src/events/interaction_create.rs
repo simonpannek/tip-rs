@@ -1,13 +1,13 @@
 use anyhow::{Error, Result};
 use entity::{
     action_data::{SurveyQuestion, SurveyResponseOption},
-    survey_question,
+    survey_question, survey_response,
 };
 use poise::serenity_prelude::{
-    self as serenity, model::application::interaction::Interaction, ComponentType, InputTextStyle,
-    InteractionResponseType,
+    self as serenity, model::application::interaction::Interaction, ActionRowComponent,
+    ComponentType, InputTextStyle, InteractionResponseType,
 };
-use sea_orm::EntityTrait;
+use sea_orm::{ActiveValue::Set, ColumnTrait, EntityTrait, QueryFilter};
 
 use crate::{client::Data, utils::create_embed};
 
@@ -94,9 +94,73 @@ pub async fn on_interaction_create(
                         };
                     }
                 }
-                ComponentType::SelectMenu => todo!(),
-                ComponentType::InputText => todo!(),
+                ComponentType::SelectMenu => {
+                    let question_id = interaction.data.custom_id.parse()?;
+                    let user_id = interaction.user.id.0 as i64;
+
+                    survey_response::Entity::delete_many()
+                        .filter(
+                            survey_response::Column::QuestionId
+                                .eq(question_id)
+                                .and(survey_response::Column::UserId.eq(user_id)),
+                        )
+                        .exec(&framework.user_data.db_conn)
+                        .await?;
+
+                    for value in &interaction.data.values {
+                        survey_response::Entity::insert(survey_response::ActiveModel {
+                            question_id: Set(question_id),
+                            user_id: Set(user_id),
+                            response: Set(value.clone()),
+                            ..Default::default()
+                        })
+                        .exec(&framework.user_data.db_conn)
+                        .await?;
+
+                        interaction
+                            .create_interaction_response(&ctx.http, |response| {
+                                response.kind(InteractionResponseType::DeferredUpdateMessage)
+                            })
+                            .await?;
+                    }
+                }
                 _ => {}
+            }
+
+            Ok(())
+        }
+        Interaction::ModalSubmit(interaction) => {
+            if let Some(row) = interaction.data.components.first() {
+                if let Some(component) = row.components.first() {
+                    if let ActionRowComponent::InputText(input_text) = component {
+                        let question_id = interaction.data.custom_id.parse()?;
+                        let user_id = interaction.user.id.0 as i64;
+
+                        survey_response::Entity::delete_many()
+                            .filter(
+                                survey_response::Column::QuestionId
+                                    .eq(question_id)
+                                    .and(survey_response::Column::UserId.eq(user_id)),
+                            )
+                            .exec(&framework.user_data.db_conn)
+                            .await?;
+
+                        survey_response::Entity::insert(survey_response::ActiveModel {
+                            question_id: Set(question_id),
+                            user_id: Set(user_id),
+                            response: Set(input_text.value.clone()),
+                            ..Default::default()
+                        })
+                        .exec(&framework.user_data.db_conn)
+                        .await?;
+
+                        interaction
+                            .create_interaction_response(&ctx.http, |response| {
+                                response.kind(InteractionResponseType::DeferredUpdateMessage)
+                            })
+                            .await?;
+                    }
+                }
             }
 
             Ok(())
